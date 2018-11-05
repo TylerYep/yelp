@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from mpl_toolkits.basemap import Basemap
 
-rest = pd.read_csv('data/yelp_toronto.csv', ',', header = 0)
+rest = pd.read_csv('data/yelp_toronto.csv', ' ', header = 0)
 
 print rest.shape
 
-# generate edges
+# # generate edges
 # edge = pd.DataFrame(columns=('r1', 'r2'))
-# for i in tqdm(range(40)):
+# for i in tqdm(range(8000)):
 #     while True:
 #         e = rest.sample(2)['id']
 #         iedge = (e.iloc[0], e.iloc[1])
@@ -27,10 +27,10 @@ graph = nx.from_pandas_edgelist(edge, source = 'r1', target='r2')
 plt.figure(figsize = (10, 9))
 
 m = Basemap(projection='merc', \
-        llcrnrlat = rest['latitude'].min() - 0.001, \
-        urcrnrlat = rest['latitude'].max() + 0.001, \
-        llcrnrlon = rest['longitude'].min() - 0.001, \
-        urcrnrlon = rest['longitude'].max() + 0.001, \
+        llcrnrlat = rest['latitude'].min() - 0.05, \
+        urcrnrlat = rest['latitude'].max() + 0.05, \
+        llcrnrlon = rest['longitude'].min()- 0.1, \
+        urcrnrlon = rest['longitude'].max()+ 0.1, \
         epsg = 3347) 
 # For map types: http://server.arcgisonline.com/arcgis/rest/services
 # I like "World_Topo_Map" or "ESRI_Imagery_World_2D"
