@@ -1,26 +1,19 @@
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 from mpl_toolkits.basemap import Basemap
+import argparse
 
-rest = pd.read_csv('data/yelp_toronto.csv', ' ', header = 0)
+parser = argparse.ArgumentParser(description='visualize a graph')
+parser.add_argument('--rest-file', '-r', help='csv of restaurants separated by spaces', default='data/yelp_toronto.csv')
+parser.add_argument('--edge-file', '-e', help='csv of edges separated by commas', default='data/toronto_knn_5.csv')
+args = parser.parse_args()
 
-print rest.shape
+rest_file = args.rest_file
+edge_file = args.edge_file
 
-# # generate edges
-# edge = pd.DataFrame(columns=('r1', 'r2'))
-# for i in tqdm(range(8000)):
-#     while True:
-#         e = rest.sample(2)['id']
-#         iedge = (e.iloc[0], e.iloc[1])
-#         if ((edge['r1'] == iedge[0]) & (edge['r2'] == iedge[1])).any():
-#             continue
-#         edge.loc[i] = iedge
-#         break
-# edge.to_csv('data/test_edges.csv', ',')
-
-edge = pd.read_csv('data/test_edges.csv', ',', header = 0)
+rest = pd.read_csv(rest_file, ' ', header = 0)
+edge = pd.read_csv(edge_file, ',', header = 0)
 
 graph = nx.from_pandas_edgelist(edge, source = 'r1', target='r2')
 
