@@ -21,19 +21,34 @@ with open(args.edge_list_file, 'r') as f:
 
 nodes = {}
 category_counts = collections.defaultdict(int)
+category_pair_counts = collections.defaultdict(int)
+exclude = ['Restaurants', 'Food']
 with open(args.node_file, 'r') as f:
     reader = csv.reader(f, delimiter=' ', quotechar='"')
     next(reader, None)
     for row in reader:
-        l = row[3].split(', ')
+        l = sorted(row[3].split(', '))
         nodes[row[0]] = l
         for category in l:
-            category_counts[category] += 1
+            if category not in exclude:
+                category_counts[category] += 1
+        for i in range(len(l)):
+            if l[i] in exclude:
+                continue
+            for j in range(i+1, len(l)):
+                if l[j] in exclude:
+                    continue
+                category_pair_counts[(l[i], l[j])] += 1
 
 if args.counts:
     category_counts_list = [(k, category_counts[k]) for k in category_counts]
     category_counts_list.sort(key = lambda p: -p[1])
     for i, tup in enumerate(category_counts_list[:20]):
+        print "{0}\t{2}\t{1}".format(i+1, *tup)
+    print "-" * 40
+    category_pair_counts_list = [(k, category_pair_counts[k]) for k in category_pair_counts]
+    category_pair_counts_list.sort(key = lambda p: -p[1])
+    for i, tup in enumerate(category_pair_counts_list[:20]):
         print "{0}\t{2}\t{1}".format(i+1, *tup)
 
 # create directory if not created
