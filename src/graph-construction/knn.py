@@ -7,14 +7,18 @@ import argparse
 
 parser = argparse.ArgumentParser(description='generate graph based on kNN')
 parser.add_argument('--num-neighbors', '-k', help='value of k', type=int, default=20)
+parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_toronto.csv')
+parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/toronto_knn_{}.csv')
 args = parser.parse_args()
 
 num_neighbors = args.num_neighbors
+point_file = args.point_file
+output_file = args.output_file
 
 coords = []
 rids = []
 
-with open('data/yelp_toronto.csv', 'r') as csvfile:
+with open(point_file, 'r') as csvfile:
 	reader = csv.reader(csvfile, delimiter=' ')
 	next(reader, None) # skip header
 	for row in reader:
@@ -33,7 +37,7 @@ G = snap.TUNGraph.New()
 for i in range(len(x)):
 	G.AddNode(i)
 
-with open('data/toronto_knn_{}.csv'.format(num_neighbors), 'w') as fout:
+with open(output_file.format(num_neighbors), 'w') as fout:
 	fout.write('r1,r2\n')
 	for cluster in indices:
 		for i in range(len(cluster)):
