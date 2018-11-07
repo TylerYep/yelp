@@ -12,6 +12,7 @@ with open('data/yelp_academic_dataset_business.json', 'r') as f:
                 out.write('\n')
 
 blah = collections.defaultdict(int)
+
 with open('data/yelp_toronto.json', 'r') as f:
     with open('data/yelp_toronto.csv', 'w') as out:
         out.write('id latitude longitude categories stars\n')
