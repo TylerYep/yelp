@@ -8,15 +8,19 @@ import argparse
 parser = argparse.ArgumentParser(description='generate graph based on kNN')
 parser.add_argument('--num-neighbors', '-k', help='value of k', type=int, default=20)
 parser.add_argument('--radius', '-r', help='radius, if clustering by radius', type=float, default=0)
+parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_toronto.csv')
+parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/toronto_{}.csv')
 args = parser.parse_args()
 
-num_neighbors = args.num_neighbors
 radius_sz = args.radius
+num_neighbors = args.num_neighbors
+point_file = args.point_file
+output_file = args.output_file
 
 coords = []
 rids = []
- 
-with open('data/yelp_toronto.csv', 'r') as csvfile:
+
+with open(point_file, 'r') as csvfile:
 	reader = csv.reader(csvfile, delimiter=' ')
 	hdr = next(reader, None) # skip header
 	x_idx = hdr.index("latitude")
@@ -46,11 +50,13 @@ for i in range(len(x)):
 
 if radius_sz:
 	outputStr = "radius_{}".format(radius_sz) 
+	edgeOutput = "edgelist_" + outputStr
 else:
 	outputStr = "knn_{}".format(num_neighbors)
+	edgeOutput = "edgelist_" + outputStr
 
-with open('data/toronto_{}.csv'.format(outputStr), 'w') as fout:
-	with open('data/toronto_edgelist_{}.csv'.format(outputStr), 'w') as fout2:
+with open(output_file.format(outputStr), 'w') as fout:
+	with open(output_file.format(edgeOutput), 'w') as fout2:
 		fout.write('r1,r2\n')
 		for cluster in indices:
 			for i in range(len(cluster)):
