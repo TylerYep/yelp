@@ -17,7 +17,6 @@ if len(args.edge_files) > len(colors):
 
 rest_file = args.rest_file
 rest = pd.read_csv(rest_file, ' ', header = 0)
-
 graphs = []
 for edge_file in args.edge_files:
     edge = pd.read_csv(edge_file, ',', header = 0)
@@ -46,3 +45,4 @@ for color, graph in zip(colors, graphs):
             node_color = 'r', node_size = 3)
     nx.draw_networkx_edges(G = graph, pos = pos, edge_color = color)
 plt.show()
+

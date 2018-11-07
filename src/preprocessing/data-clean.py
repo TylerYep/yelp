@@ -14,7 +14,8 @@ with open('data/yelp_academic_dataset_business.json', 'r') as f:
 blah = collections.defaultdict(int)
 with open('data/yelp_toronto.json', 'r') as f:
     with open('data/yelp_toronto.csv', 'w') as out:
-        out.write('id latitude longitude categories stars\n')
-        for l in f:
+        out.write('idx id latitude longitude categories stars review_count\n')
+        for i,l in enumerate(f):
             ex = json.loads(l)
-            out.write('{business_id} {latitude} {longitude} "{categories}" {stars}\n'.format(**ex))
+            out.write('{} {business_id} {latitude} {longitude} "{categories}" {stars} {review_count} \n'.format(i,**ex))
+
