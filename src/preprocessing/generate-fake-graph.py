@@ -6,9 +6,10 @@ import matplotlib.pyplot as plt
 import os
 
 parser = argparse.ArgumentParser(description = 'generate fake graph using $BASE-category.png and $BASE-density.png')
-parser.add_argument('--filename-base', '-f', help='base of density and category filenames', default='data/fake-graphs/1')
+parser.add_argument('--dir', '-d', help='directory of density and category files', default='data/fake-graphs/1')
 args = parser.parse_args()
 
+# dat hardcode lmao
 cat_map_hex = {"c9daf8ff" : 1, "5b0f00ff" : 2, "00000000" : 0}
 density_map_hex = {"00000000" : 0, "00ffffff" : 1, "4a86e8ff" : 2, "0000ffff" : 3}
 
@@ -25,8 +26,13 @@ for c in density_map_hex:
 print cat_map
 print density_map
 
-catim = Image.open(args.filename_base + '-category.png')
-denim = Image.open(args.filename_base + '-density.png')
+category_file = os.path.join(args.dir, 'category.png')
+density_file = os.path.join(args.dir, 'density.png')
+if not os.path.exists(category_file) or not os.path.exists(density_file):
+    raise ValueError('category.png and density.png not found in given directory')
+
+catim = Image.open(category_file)
+denim = Image.open(density_file)
 
 if catim.size != denim.size:
     print "image dimensions must be the same"
@@ -82,11 +88,7 @@ for i, point_type in enumerate(categorized_points):
     plt.scatter(xpoints, ypoints, c = colors[i], marker = '.')
 plt.show() 
 
-basedirname = os.path.dirname(args.filename_base)
-fbase = os.path.basename(args.filename_base)
-dirname = os.path.join(basedirname, fbase)
-if not os.path.exists(dirname):
-    os.makedirs(dirname)
+dirname = os.path.join(args.dir)
 pointfile = os.path.join(dirname, 'points.csv')
 with open(pointfile, 'w+') as f:
     f.write('id latitude longitude categories\n')
