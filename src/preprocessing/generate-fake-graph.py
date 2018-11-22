@@ -80,8 +80,7 @@ for i, point_type in enumerate(categorized_points):
     type_points = categorized_points[point_type]
     xpoints, ypoints = zip(*type_points)
     plt.scatter(xpoints, ypoints, c = colors[i], marker = '.')
-    plt.show() 
-    plt.clf()
+plt.show() 
 
 basedirname = os.path.dirname(args.filename_base)
 fbase = os.path.basename(args.filename_base)
