@@ -55,9 +55,10 @@ def round_img(pix, im, cmap, x, y):
 pixc = catim.load()
 pixd = denim.load()
 density_levels = {0 : 0, 1 : 2e-2, 2: 6e-2, 3: 18e-2}
-category_density_mod = 0.3
+category_density_mod = 0.4
 base_prob = 0.2
 points = {}
+labels = {}
 for x in range(catim.size[0]):
     for y in range(catim.size[1]):
         cat = round_img(pixc, catim, cat_map, x, y)
@@ -69,11 +70,17 @@ for x in range(catim.size[0]):
         points[(x,y)] = set()
         for i in range(3):
             prob = base_prob
+            label_cat = False
             if cat != 0 and i == cat:
                 prob += category_density_mod
+                label_cat = True
             is_cat = random.random()
             if is_cat < prob:
                 points[(x,y)].add(i)
+                if label_cat:
+                    labels[(x,y)] = i
+        if (x,y) not in labels:
+            labels[(x,y)] = 0
 
 categorized_points = collections.defaultdict(list)
 for k in points:
@@ -90,9 +97,16 @@ plt.show()
 
 dirname = os.path.join(args.dir)
 pointfile = os.path.join(dirname, 'points.csv')
+idmap = {}
 with open(pointfile, 'w+') as f:
     f.write('id latitude longitude categories\n')
     it = 0
     for point in points:
+        idmap[point] = it
         f.write('{} {} {} "{}"\n'.format(it, point[0], point[1], ', '.join([str(x) for x in points[point]])))
         it += 1
+
+labelfile = os.path.join(dirname, 'labels.csv')
+with open(labelfile, 'w+') as f:
+    for point in labels:
+        f.write('{} {}\n'.format(idmap[point], labels[point]))
