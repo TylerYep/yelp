@@ -3,6 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
 import argparse
+import os
 
 colors = ['b', 'g', 'm', 'k', 'w']
 
@@ -31,8 +32,9 @@ pos = {}
 for i, el in enumerate(rest['id']):
     pos[el] = (mx[i], my[i])
 
-for color, graph in zip(colors, graphs):
+for color, graph, efile in zip(colors, graphs, args.edge_files):
     nx.draw_networkx_nodes(G = graph, pos = pos, node_list = graph.nodes(), \
             node_color = 'r', node_size = 0)
-    nx.draw_networkx_edges(G = graph, pos = pos, edge_color = color)
+    nx.draw_networkx_edges(G = graph, pos = pos, edge_color = color, label=os.path.basename(efile))
+plt.legend()
 plt.show()
