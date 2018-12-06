@@ -17,6 +17,8 @@ import matplotlib.pyplot as plt
 import community
 import pandas as pd
 
+# import networkx.convert_matrix
+print(nx.Graph())
 
 def parse_args():
 	'''
@@ -86,14 +88,19 @@ def main(args):
 	nx_G = []
 	for edge_file in args.edge_files:
 		edge = pd.read_csv(edge_file, ',', header = 0)
-		nx_G = nx.from_pandas_edgelist(edge, source = 'r1', target='r2')
-	G = node2vec.Graph(nx_G, args.directed, args.p, args.q)
-	G.preprocess_transition_probs()
-	walks = G.simulate_walks(args.num_walks, args.walk_length)
-	model = learn_embeddings(walks)
+		nx_G = nx.convert_matrix.from_pandas_edgelist(edge, source = 'r1', target='r2')
+		print(nx_G)
+	# G = node2vec.Graph(nx_G, args.directed, args.p, args.q)
+	# G.preprocess_transition_probs()
+	# walks = G.simulate_walks(args.num_walks, args.walk_length)
+	# model = learn_embeddings(walks)
 
 	partition = community.best_partition(nx_G, randomize=True)
-	nx.draw_spring(nx_G, with_labels=True, cmap=plt.cm.RdYlBu, node_color=list(partition))
+	# print(partition)
+	parts = []
+	for i in partition.values():
+		parts.append(i)
+	nx.draw_spring(nx_G, cmap=plt.cm.RdYlBu, node_color=parts)
 	plt.show()
 
 

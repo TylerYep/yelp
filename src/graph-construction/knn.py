@@ -4,12 +4,13 @@ from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import csv
 import argparse
+import features
 
 parser = argparse.ArgumentParser(description='generate graph based on kNN')
 parser.add_argument('--num-neighbors', '-k', help='value of k', type=int, default=20)
 parser.add_argument('--radius', '-r', help='radius, if clustering by radius', type=float, default=0)
 parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_toronto.csv')
-parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/toronto_{}.csv')
+parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/graph_toronto_{}.csv')
 args = parser.parse_args()
 
 radius_sz = args.radius
@@ -29,7 +30,7 @@ with open(point_file, 'r') as csvfile:
 		rid = row[0]
 		x = row[x_idx].replace(",","")
 		y = row[y_idx].replace(",","")
-	
+
 		coords.append([float(x), float(y)])
 		rids.append(rid)
 
@@ -43,13 +44,12 @@ else:
 	nbrs = NearestNeighbors(n_neighbors=num_neighbors, algorithm='auto').fit(np.array(x))
 	distances, indices = nbrs.kneighbors(x)
 
-print indices
 G = snap.TUNGraph.New()
 for i in range(len(x)):
 	G.AddNode(i)
 
 if radius_sz:
-	outputStr = "radius_{}".format(radius_sz) 
+	outputStr = "radius_{}".format(radius_sz)
 	edgeOutput = "edgelist_" + outputStr
 else:
 	outputStr = "knn_{}".format(num_neighbors)
@@ -65,6 +65,4 @@ with open(output_file.format(outputStr), 'w') as fout:
 					fout2.write('{},{}\n'.format(int(cluster[i]), int(cluster[j])))
 					G.AddEdge(int(cluster[i]), int(cluster[j]))
 
-
-print G.GetNodes()
-print G.GetEdges()
+features.print_features(G)

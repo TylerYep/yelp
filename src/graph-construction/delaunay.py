@@ -8,7 +8,7 @@ import os
 
 parser = argparse.ArgumentParser(description='generate graph(s) based on Delaunay triangulation and categories')
 parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_toronto.csv')
-parser.add_argument('--output-file', '-o', help='file to output edges to', default='data/toronto_delaunay.csv')
+parser.add_argument('--output-file', '-o', help='file to output edges to', default='data/graph_toronto_delaunay.csv')
 parser.add_argument('--output-dir', '-d', help='directory to output categorized edges to', default='data/categories')
 parser.add_argument('--categories', '-c', nargs='+', help='categories to isolate on', default=['Chinese', 'Bars', 'Sandwiches'])
 args = parser.parse_args()
@@ -32,7 +32,7 @@ with open(point_file, 'r') as csvfile:
         rid = row[0]
         x = row[x_idx].replace(",","")
         y = row[y_idx].replace(",","")
-    
+
         coords.append([float(x), float(y)])
         rids.append(rid)
 
@@ -56,14 +56,14 @@ def get_delaunay_graph(coords, category = None):
                 points.append(point)
     x = np.array(points)
     tri = Delaunay(x)
-    
+
     edges = set()
     for n in xrange(tri.nsimplex):
         for i in range(3):
             for j in range(i, 3):
                 edge = sorted([tri.vertices[n, i], tri.vertices[n, j]])
                 edges.add(tuple(edge))
-    
+
     if category == None:
         output_filename = output_file
     else:
