@@ -65,4 +65,4 @@ with open(output_file.format(outputStr), 'w') as fout:
 					fout2.write('{},{}\n'.format(int(cluster[i]), int(cluster[j])))
 					G.AddEdge(int(cluster[i]), int(cluster[j]))
 
-features.print_features(G)
+# features.print_features(G)

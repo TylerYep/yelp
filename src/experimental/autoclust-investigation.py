@@ -26,6 +26,8 @@ parser.add_argument('--categories', '-c', help='categories corresponding to file
         'please don\'t try to include 0', nargs='+')
 parser.add_argument('--output-dir', '-o', help='where to put generated graphs')
 parser.add_argument('--label', '-l', help='file of labels')
+parser.add_argument('--rounds', '-r', help='number of rounds of filtering', type=int, default=2)
+parser.add_argument('--full', action='store_true', help='store entire normalized graph')
 args = parser.parse_args()
 if args.default:
     default_dir = args.default_dir
@@ -43,16 +45,18 @@ if args.normalize not in normalize_actions:
     raise argparse.ArgumentError( \
             'normalize must be one of: [{}]'.format(','.join(normalize_actions)))
 
-# read {label : set(nodes w/ that label)}
-labelfile = args.label
-labels = {cat : set() for cat in args.categories}
-with open(labelfile, 'r') as f:
-    for l in f:
-        blah = l.split()
-        k = int(blah[0])
-        v = blah[1]
-        if v in labels:
-            labels[v].add(k)
+if args.action == 'analyze':
+    # read {label : set(nodes w/ that label)}
+    labelfile = args.label
+    labels = {cat : set() for cat in args.categories}
+    with open(labelfile, 'r') as f:
+        for l in f:
+            blah = l.split()
+            k = int(blah[0])
+            v = blah[1]
+            if v in labels:
+                labels[v].add(k)
+
 nodefile = args.nodes
 nodes = pd.read_csv(nodefile, ' ', header=0)
 idmap = {row['id'] : idx for (idx, row) in nodes.iterrows()}
@@ -105,6 +109,7 @@ def nodewise_stats(func, exp = 2):
 #    { nodes of category not in high-density : stats } 
 # ] }
 def split_node_stats(full):
+    assert(args.action == 'analyze')
     split = {}
     for cat in full:
         split[cat] = [{}, {}]
@@ -116,7 +121,6 @@ def split_node_stats(full):
     return split
 
 # get stats per edge
-# goal: what is the threshold for Long_Edges? (edges not between clusters)
 # ----
 # return format:
 # { category : { nodes of category : stat } }
@@ -227,6 +231,7 @@ def angle_norm_edge_stats(exp = 2, zscore = False):
 #       { edges not in high-density : stats }
 # ] }
 def split_edge_stats(full):
+    assert(args.action == 'analyze')
     split = {}
     for cat in graphs:
         split[cat] = [{}, {}, {}]
@@ -282,15 +287,28 @@ def avestd_rounds(stats, rounds):
     return ave, std
 
 def save_graph(graph, fname, weighted = True):
+    if weighted:
+        with open(fname, 'wb+') as f:
+            f.write('r1,r2,weight\n')
+            nx.write_edgelist(graph, f, delimiter=',', data=['distance'])
+    else:
+        with open(fname, 'wb+') as f:
+            f.write('r1,r2\n')
+            vx.write_edgelist(graph, f, delimiter=',')
+
+def save_full_graph(edge_map, fname):
     with open(fname, 'wb+') as f:
         f.write('r1,r2,weight\n')
-        nx.write_edgelist(graph, f, delimiter=',', data=['distance'])
+        for key, value in stats.iteritems():
+            if key[1] > key[0]:
+                continue
+            f.write('{},{},{}'.format(key[0], key[1], stats[key] + stats[(key[1],key[0])]))
 
 if args.normalize == 'node':
     full = nodewise_stats(mean_edge_len)
     for cat in full:
         stats = full[cat]
-        ave, std = avestd_rounds(stats, 2)
+        ave, std = avestd_rounds(stats, args.rounds)
         name, graph = graphs[cat]
         newgraph = graph.copy()
         for node in stats:
@@ -304,28 +322,44 @@ elif args.normalize == 'edge':
     full = norm_edge_stats(mean_edge_len)
     for cat in full:
         stats = full[cat]
-        ave, std = avestd_rounds(stats, 2)
+        if args.full:
+            oname = os.path.join(os.path.dirname(name), \
+                    os.path.splitext(os.path.basename(name))[0] \
+                        + '_' + args.normalize + '_' \
+                        + 'full' + '.csv')
+            save_full_graph(stats, oname)
+        ave, std = avestd_rounds(stats, args.rounds)
         name, graph = graphs[cat]
         newgraph = graph.copy()
         for edge in graph.edges:
             if stats[edge] > ave + std:
                 newgraph.remove_edge(*edge)
         oname = os.path.join(os.path.dirname(name), \
-                os.path.splitext(os.path.basename(name))[0] + '_' + args.normalize + '.csv')
+                os.path.splitext(os.path.basename(name))[0] \
+                + '_' + args.normalize + '_' \
+                + str(args.rounds) + '.csv')
         save_graph(newgraph, oname, weighted = True)
 
 elif args.normalize == 'angle':
     full = angle_norm_edge_stats()
     for cat in full:
         stats = full[cat]
-        ave, std = avestd_rounds(stats, 2)
+        if args.full:
+            oname = os.path.join(os.path.dirname(name), \
+                    os.path.splitext(os.path.basename(name))[0] \
+                        + '_' + args.normalize + '_' \
+                        + 'full' + '.csv')
+            save_full_graph(stats, oname)
+        ave, std = avestd_rounds(stats, args.rounds)
         name, graph = graphs[cat]
         newgraph = graph.copy()
         for edge in graph.edges:
             if stats[edge] > ave + std:
                 newgraph.remove_edge(*edge)
         oname = os.path.join(os.path.dirname(name), \
-                os.path.splitext(os.path.basename(name))[0] + '_' + args.normalize + '.csv')
+                os.path.splitext(os.path.basename(name))[0] \
+                + '_' + args.normalize + '_' \
+                + str(args.rounds) + '.csv')
         save_graph(newgraph, oname, weighted = True)
 
 # mx, my = (nodes['longitude'].values, nodes['latitude'].values)

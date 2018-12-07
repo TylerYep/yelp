@@ -55,7 +55,7 @@ def get_delaunay_graph(coords, category = None):
                 cat_to_full[len(points)] = i
                 points.append(point)
     x = np.array(points)
-    tri = Delaunay(x)
+    tri = Delaunay(x, qhull_options="QJ")
 
     edges = set()
     for n in xrange(tri.nsimplex):
