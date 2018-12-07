@@ -28,6 +28,7 @@ parser.add_argument('--output-dir', '-o', help='where to put generated graphs')
 parser.add_argument('--label', '-l', help='file of labels')
 parser.add_argument('--rounds', '-r', help='number of rounds of filtering', type=int, default=2)
 parser.add_argument('--full', action='store_true', help='store entire normalized graph')
+
 args = parser.parse_args()
 if args.default:
     default_dir = args.default_dir
@@ -302,7 +303,7 @@ def save_full_graph(edge_map, fname):
         for key, value in stats.iteritems():
             if key[1] > key[0]:
                 continue
-            f.write('{},{},{}'.format(key[0], key[1], stats[key] + stats[(key[1],key[0])]))
+            f.write('{},{},{}\n'.format(key[0], key[1], stats[key] + stats[(key[1],key[0])]))
 
 if args.normalize == 'node':
     full = nodewise_stats(mean_edge_len)
