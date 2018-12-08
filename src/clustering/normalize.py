@@ -44,14 +44,15 @@ def general_normalize(graph, category, basegraph, nodes, rounds, norm_type):
     to_ret = nx.from_pandas_edge_list(edge, source='r1', target='r2', edge_attr='weight')
     return to_ret
 
-def angle_normalize(graph, category, basegraph, nodes, rounds = None):
+def normalize_angle(graph, category, basegraph, nodes, rounds = None):
     '''
     Normalizes a given graph category referencing angles based on a given basegraph 
     using the distances in the given nodes dataframe.
+    nodes: dataframe with id, latitude, longitude, categories
     '''
     return general_normalize(graph, category, basegraph, nodes, rounds, 'angle')
 
-def edge_normalize(graph, category, basegraph, nodes, rounds = None):
+def normalize_edge(graph, category, basegraph, nodes, rounds = None):
     '''
     Normalizes a given graph category referencing edges based on a given basegraph 
     using the distances in the given nodes dataframe.
