@@ -7,7 +7,7 @@ import numpy as np
 import json
 import math
 
-colors = ['b', 'g', 'm', 'k','r', 'c', 'y', 'coral', 'darkviolet']
+colors = ['b', 'g', 'm', 'k', 'r', 'c', 'y', 'coral', 'darkviolet']
 
 parser = argparse.ArgumentParser(description='visualize a graph')
 parser.add_argument('--rest-file', '-r', help='csv of restaurants separated by spaces', default='data/yelp_toronto.csv')
@@ -39,7 +39,7 @@ m = Basemap(projection='merc', \
         urcrnrlat = rest['latitude'].max() + 0.05, \
         llcrnrlon = float(rest['longitude'].min())- 0.1, \
         urcrnrlon = rest['longitude'].max()+ 0.1, \
-        epsg = 3347) 
+        epsg = 3347)
 # For map types: http://server.arcgisonline.com/arcgis/rest/services
 # I like "World_Topo_Map" or "ESRI_Imagery_World_2D"
 m.arcgisimage(service='World_Topo_Map', xpixels = 2000, verbose= True)
@@ -47,7 +47,6 @@ m.arcgisimage(service='World_Topo_Map', xpixels = 2000, verbose= True)
 color_map = 'r'
 if args.color_assignments:
     color_map = []
-    # color_assignments = "data\louvain_dict_knn_20.json"
     with open(args.color_assignments, "r") as f:
         color_dict = json.loads(f.read())
         for node in graph.nodes():

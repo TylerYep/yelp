@@ -75,6 +75,7 @@ def construct_matrix():
 
     print(distance_matrix)
     print(duration_matrix)
+    dist_df = distance_matrix
 
 
 def make_query_chunk(locations_arr, chunk):

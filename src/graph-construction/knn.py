@@ -59,6 +59,6 @@ else:
 
 with open(output_file.format(outputStr), 'wb+') as fout:
     with open(output_file.format(edgeOutput), 'wb+') as fout2:
-        fout.write('r1,r2\n')
-        nx.write_edgelist(G, fout)
-        nx.write_edgelist(G, fout2)
+        fout.write('r1,r2,weight\n')
+        nx.write_edgelist(G, fout, data="weight")
+        nx.write_edgelist(G, fout2, data="weight")
