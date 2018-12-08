@@ -13,7 +13,7 @@ def generate_fake_graph(graph_dir, to_clean = False):
     labelfile = os.path.join(graph_dir, 'labels.csv')
     if not to_clean and os.path.isfile(pointsfile) and os.path.isfile(labelfile):
         return pointsfile, labelfile
-    subprocess.call(to_run)
+    subprocess.check_call(to_run)
     if os.path.isfile(pointsfile) and os.path.isfile(labelfile):
         return pointsfile, labelfile
     else:

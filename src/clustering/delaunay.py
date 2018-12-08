@@ -1,13 +1,14 @@
 from scipy.spatial import Delaunay
+import numpy as np
+import networkx as nx
 
-def delaunay(nodes, category_map, category = None):
+def delaunay(coords, nids, category_map, category = None):
     '''
-    nodes: dataframe with latitude, longitude, id
+    coords: array with latitude, longitude
+    nids: array with corresponding node ids
     category_map: map from id to category
     category: None or a category
     '''
-    coords = nodes[['latitude', 'longitude']]
-    nids = nodes[['id']]
     if category == None:
         points = coords
     else:
@@ -26,6 +27,8 @@ def delaunay(nodes, category_map, category = None):
                 edge = sorted([tri.vertices[n, i], tri.vertices[n, j]])
                 edges.add(tuple(edge))
     graph = nx.Graph()
-    for e in edges:
-        graph.add_edge(e[0], e[1])
+    for u,v in edges:
+        a = nids[cat_to_full[u]] if category else nids[u]
+        b = nids[cat_to_full[v]] if category else nids[v]
+        graph.add_edge(a, b)
     return graph

@@ -22,15 +22,22 @@ def filter_connected_components(graph, verbose = False):
                 to_ret.remove_node(n)
     return to_ret
 
-def remove_edges_rounds(graph, rounds):
+def remove_edges_rounds(graph, rounds, upper, verbose=False):
     '''
-    repeatedly remove edges based on if less than ave
+    repeatedly remove edges based on upper. if upper is true, then 
+    remove edges > ave, else < ave
     '''
     vals = np.array([graph[u][v]['weight'] for u,v in graph.edges()])
     for _ in range(rounds):
         ave = np.mean(vals)
-        vals = vals[np.where(vals < ave)]
-    return remove_edges(graph, ave, upper=True)
+        if verbose:
+            std = np.std(vals)
+            print 'vals average: {}, std: {}'.format(ave, std)
+        if upper:
+            vals = vals[np.where(vals < ave)]
+        else:
+            vals = vals[np.where(vals > ave)]
+    return remove_edges(graph, ave, upper)
 
 def remove_edges(graph, threshold, upper):
     '''
@@ -45,5 +52,6 @@ def remove_edges(graph, threshold, upper):
         else:
             if graph[u][v]['weight'] < threshold:
                 to_ret.remove_edge(u,v)
+    to_ret.remove_nodes_from(list(nx.isolates(to_ret)))
     return to_ret
 

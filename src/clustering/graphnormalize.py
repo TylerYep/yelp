@@ -8,17 +8,17 @@ def general_normalize(graph, category, basegraph, nodes, rounds, norm_type):
     to_run.extend(['--normalize', norm_type])
     # generate category file
     cat_file = '/tmp/catgraph.csv'
-    with open(cat_file) as f:
+    with open(cat_file, 'wb+') as f:
         f.write('r1,r2\n')
-    nx.write_edgelist(graph, cat_file, delimiter=',')
+        nx.write_edgelist(graph, f, delimiter=',', data=False)
     to_run.extend(['-f', cat_file])
     to_run.extend(['-c', category])
 
     # generate base graph file
     base_file = '/tmp/basegraph.csv'
-    with open(cat_file) as f:
+    with open(base_file, 'wb+') as f:
         f.write('r1,r2\n')
-    nx.write_edgelist(basegraph, base_file, delimiter=',')
+        nx.write_edgelist(basegraph, f, delimiter=',', data=False)
     to_run.extend(['-b', base_file])
 
     # write nodes dataframe
@@ -28,20 +28,23 @@ def general_normalize(graph, category, basegraph, nodes, rounds, norm_type):
 
     # identify output directory
     out_file = '/tmp/autoclust_normalize'
-    to_run.extend(['-o', autoclust_normalize])
+    to_run.extend(['-o', out_file])
     if rounds:
         to_run.extend(['--rounds', str(rounds)])
-        expected_out_file = '/tmp/autoclust_normalize/catgraph_{}_{}.csv'.format(norm_type, rounds)
+        expected_out_file = os.path.join(out_file, 'catgraph_{}_{}.csv'.format(norm_type, rounds))
     else:
         to_run.extend(['--full'])
-        expected_out_file = '/tmp/autoclust_normalize/catgraph_{}_full.csv'.format(norm_type)
+        expected_out_file = os.path.join(out_file, 'catgraph_{}_full.csv'.format(norm_type))
 
     # run the thing
-    subprocess.call(to_run)
+    # print 'Calling "{}"'.format(' '.join(to_run))
+    subprocess.check_call(to_run)
 
     # get resulting graph
     edge = pd.read_csv(expected_out_file, ',', header=0)
-    to_ret = nx.from_pandas_edge_list(edge, source='r1', target='r2', edge_attr='weight')
+    edge['r1'] = edge['r1'].apply(str)
+    edge['r2'] = edge['r2'].apply(str)
+    to_ret = nx.from_pandas_edgelist(edge, source='r1', target='r2', edge_attr='weight')
     return to_ret
 
 def normalize_angle(graph, category, basegraph, nodes, rounds = None):
