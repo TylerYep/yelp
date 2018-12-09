@@ -30,7 +30,7 @@ def bit_twiddle_params(a, data, features):
     #         a.to_csv()
 
 if __name__ == "__main__":
-    a = algs.load_alg('SVM-original')
+    a = algs.load_alg('LinearReg')
     data = util.load_pkl(feature_path)
     bit_twiddle_params(a, data, util.features)
 

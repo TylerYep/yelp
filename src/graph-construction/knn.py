@@ -8,8 +8,8 @@ import argparse
 parser = argparse.ArgumentParser(description='generate graph based on kNN')
 parser.add_argument('--num-neighbors', '-k', help='value of k', type=int, default=20)
 parser.add_argument('--radius', '-r', help='radius, if clustering by radius', type=float, default=0)
-parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_toronto.csv')
-parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/graph_toronto_{}.csv')
+parser.add_argument('--point-file', '-f', help='file with points and categories', default='data/yelp_calgary.csv')
+parser.add_argument('--output-file', '-o', help='file to output edges to. can add "{}" to record what k is', default='data/graph_calgary_{}.csv')
 args = parser.parse_args()
 
 radius_sz = args.radius

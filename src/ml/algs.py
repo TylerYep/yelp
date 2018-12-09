@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sklearn
 import pickle
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, r2_score
 from sklearn.model_selection import RandomizedSearchCV
 
 import os, sys
@@ -13,8 +13,8 @@ def load_alg(name):
     path = 'data/ml/results/' + name +'.pkl'
     if os.path.isfile(path):
         return util.load_pkl(path)
-    name = name.split('-')[0]
-    return Algorithm(name, util.model_dict[name])
+    model_name = name.split('-')[0]
+    return Algorithm(name, util.model_dict[model_name])
 
 class Algorithm:
     def __init__(self, name, model):
@@ -47,7 +47,8 @@ class Algorithm:
     def eval(self, x, y):
         predictions = self.predict(x)
         test_error = util.get_acc(y, predictions)
-        prfs = precision_recall_fscore_support(y, predictions)
+        # prfs = precision_recall_fscore_support(y, predictions)
+        prfs = r2_score(y, predictions)
         return test_error, prfs
 
 
@@ -60,10 +61,10 @@ class Algorithm:
         """
         self.clf = self.model(**clf_options)
         X = data.get_joint_matrix(util.features)
-        train_x = [data.train_indices]
-        train_y = [data.train_indices]
-        val_x = [data.val_indices]
-        val_y = [data.val_indices]
+        train_x = X[data.train_indices]
+        train_y = data.labels[data.train_indices]
+        val_x = X[data.val_indices]
+        val_y = data.labels[data.val_indices]
 
         train_acc = self.train(train_x, train_y)
         test_acc, prfs = self.eval(val_x, val_y)
