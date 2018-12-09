@@ -13,6 +13,7 @@ def load_alg(name):
     path = 'data/ml/results/' + name +'.pkl'
     if os.path.isfile(path):
         return util.load_pkl(path)
+    name = name.split('-')[0]
     return Algorithm(name, util.model_dict[name])
 
 class Algorithm:
@@ -59,10 +60,10 @@ class Algorithm:
         """
         self.clf = self.model(**clf_options)
         X = data.get_joint_matrix(util.features)
-        train_x = X#[data.train_indices]
-        train_y = data.labels#[data.train_indices]
-        val_x = X#[data.val_indices]
-        val_y = data.labels#[data.val_indices]
+        train_x = [data.train_indices]
+        train_y = [data.train_indices]
+        val_x = [data.val_indices]
+        val_y = [data.val_indices]
 
         train_acc = self.train(train_x, train_y)
         test_acc, prfs = self.eval(val_x, val_y)
