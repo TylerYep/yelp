@@ -16,9 +16,9 @@ class DataFeatures:
         self.feature_matrix = self.raw
         self.fname = 'data/ml/graph_features.pkl'
 
-        self.train_indices = self.raw.index #[self.raw.split == 0]
-        self.val_indices = self.raw.index #[self.raw.split == 1]
-        self.test_indices = self.raw.index #[self.raw.split == 2]
+        self.train_indices = self.raw[self.raw.split == 0].index
+        self.val_indices = self.raw[self.raw.split == 1].index
+        self.test_indices = self.raw[self.raw.split == 2].index
 
         self.labels = self.raw.review_count.values
         self.save()
@@ -38,3 +38,4 @@ class DataFeatures:
 
 if __name__ == "__main__":
     x = DataFeatures()
+

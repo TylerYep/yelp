@@ -61,5 +61,6 @@ def load_graph():
     cols = {'degree': df.degree, 'clustering': df.clustering, 'comm_edge_density': df.comm_edge_density,
     'comm_sz': df.comm_sz, 'comm_review_count': df.comm_review_count, 'review_count': df.review_count}
     dfeatures = pd.DataFrame(cols)
+    dfeatures['split'] = np.random.choice(3, len(dfeatures), p=[0.8, 0.1, 0.1])
     pd.to_numeric(dfeatures['review_count'], errors='coerce')
     return dfeatures
