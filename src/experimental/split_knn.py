@@ -8,8 +8,8 @@ import cutoff
 # from evaluate import get_point_info
 # from cutoff import filter_connected_components
 
-output_file = "data/knnsplit/graph_toronto_8.csv"
-node_file = "data/yelp_toronto.csv"
+output_file = "data/knnsplit/graph_calgary_8.csv"
+node_file = "data/yelp_calgary.csv"
 k = 8
 
 

@@ -30,7 +30,7 @@ def bit_twiddle_params(a, data, features):
     #         a.to_csv()
 
 if __name__ == "__main__":
-    a = algs.load_alg('AdaBoost')
+    a = algs.load_alg('Random_Forest')
     data = util.load_pkl(feature_path)
     bit_twiddle_params(a, data, util.features)
 
