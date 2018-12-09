@@ -108,5 +108,6 @@ with open(pointfile, 'w+') as f:
 
 labelfile = os.path.join(dirname, 'labels.csv')
 with open(labelfile, 'w+') as f:
+    f.write('id label\n')
     for point in labels:
         f.write('{} {}\n'.format(idmap[point], labels[point]))

@@ -287,7 +287,14 @@ def avestd_rounds(stats, rounds):
         vals = np.array([v for v in stats.values() if v < ave + std])
     return ave, std
 
+def create_dirs(fname):
+    dirs = os.path.dirname(fname)
+    if not os.path.exists(dirs):
+        os.makedirs(dirs) # yes there's a race. whatever
+    return
+
 def save_graph(graph, fname, weighted = True):
+    create_dirs(fname)
     if weighted:
         with open(fname, 'wb+') as f:
             f.write('r1,r2,weight\n')
@@ -298,6 +305,7 @@ def save_graph(graph, fname, weighted = True):
             vx.write_edgelist(graph, f, delimiter=',')
 
 def save_full_graph(edge_map, fname):
+    create_dirs(fname)
     with open(fname, 'wb+') as f:
         f.write('r1,r2,weight\n')
         for key, value in stats.iteritems():
@@ -315,7 +323,7 @@ if args.normalize == 'node':
         for node in stats:
             if stats[node] > ave + std:
                 newgraph.remove_node(node)
-        oname = os.path.join(os.path.dirname(name), 
+        oname = os.path.join(args.output_dir, 
                 os.path.splitext(os.path.basename(name))[0] + '_' + args.normalize + '.csv')
         save_graph(newgraph, oname, weighted = False)
 
@@ -324,7 +332,7 @@ elif args.normalize == 'edge':
     for cat in full:
         stats = full[cat]
         if args.full:
-            oname = os.path.join(os.path.dirname(name), \
+            oname = os.path.join(args.output_dir, \
                     os.path.splitext(os.path.basename(name))[0] \
                         + '_' + args.normalize + '_' \
                         + 'full' + '.csv')
@@ -335,7 +343,7 @@ elif args.normalize == 'edge':
         for edge in graph.edges:
             if stats[edge] > ave + std:
                 newgraph.remove_edge(*edge)
-        oname = os.path.join(os.path.dirname(name), \
+        oname = os.path.join(args.output_dir, \
                 os.path.splitext(os.path.basename(name))[0] \
                 + '_' + args.normalize + '_' \
                 + str(args.rounds) + '.csv')
@@ -346,7 +354,7 @@ elif args.normalize == 'angle':
     for cat in full:
         stats = full[cat]
         if args.full:
-            oname = os.path.join(os.path.dirname(name), \
+            oname = os.path.join(args.output_dir, \
                     os.path.splitext(os.path.basename(name))[0] \
                         + '_' + args.normalize + '_' \
                         + 'full' + '.csv')
@@ -357,7 +365,7 @@ elif args.normalize == 'angle':
         for edge in graph.edges:
             if stats[edge] > ave + std:
                 newgraph.remove_edge(*edge)
-        oname = os.path.join(os.path.dirname(name), \
+        oname = os.path.join(args.output_dir, \
                 os.path.splitext(os.path.basename(name))[0] \
                 + '_' + args.normalize + '_' \
                 + str(args.rounds) + '.csv')

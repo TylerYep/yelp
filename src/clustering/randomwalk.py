@@ -89,7 +89,7 @@ def calc_pvisit(walks):
 def ns(nx_G, num_walks=100, walk_length=3):
     G = node2vec.Graph(nx_G, False, 1, 1)
     G.preprocess_transition_probs()
-    walks = G.simulate_walks(num_walks, walk_length)
+    walks = G.simulate_walks(num_walks, walk_length, False)
 
     p_visit = calc_pvisit(walks)
     graph = nx_G.copy()
@@ -128,6 +128,12 @@ def ce(nx_G, k=3, num_walks=10, walk_length=3):
         newgraph[u][v]['weight'] = newgraph[v][u]['weight'] = 0.5 * (probs[(u,v)] + probs[(v,u)])
     return newgraph
 
+def invert_graph_probs(graph):
+    graph = graph.copy()
+    for u,v in graph.edges():
+        graph[u][v]['weight'] = 1./(graph[u][v]['weight']+1)
+    return graph
+
 def main(args):
     '''
     Pipeline for representational learning for all nodes in a graph.
@@ -137,8 +143,6 @@ def main(args):
     rest = pd.read_csv(rest_file, ' ', header = 0)
     edge = pd.read_csv(edge_file, ',', header = 0)
     nx_G = nx.convert_matrix.from_pandas_edgelist(edge, source = 'r1', target='r2', edge_attr='weight')
-    for u,v in nx_G.edges():
-        nx_G[u][v]['weight'] = 1./(nx_G[u][v]['weight']+1)
     graph = ce(ce(ce(nx_G, 3), 3), 3)
     with open('test', 'wb+') as f:
         f.write('r1,r2,weight\n')
