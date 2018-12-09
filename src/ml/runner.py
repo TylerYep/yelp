@@ -11,17 +11,16 @@ import algs
 from algs import Algorithm
 from feature_data import DataFeatures
 import random
-"""
-names = ["k_Nearest_Neighbors", "SVM", "Gaussian_Process",
+
+names = ["k_Nearest_Neighbors", "SVM", # "Gaussian_Process",
          "Decision_Tree", "Random_Forest", "Neural_Net", "AdaBoost",
          "Naive_Bayes", "Logistic_Regression", 'Dummy', 'LinearReg']
-"""
+
 
 feature_path = 'data/ml/graph_features.pkl'
 
 
 def bit_twiddle_params(a, data, features):
-
     criterion=['gini', 'entropy']
     splitter=['best', 'random']
     # max_depth=[None, 100]
@@ -35,10 +34,11 @@ def bit_twiddle_params(a, data, features):
         a.to_csv()
 
 if __name__ == "__main__":
-    a = algs.load_alg('SVM')
-    data = util.load_pkl(feature_path)
-    a.run(data, util.features)
-    a.to_csv()
+    for n in names:
+        a = algs.load_alg(n)
+        data = util.load_pkl(feature_path)
+        a.run(data, util.features)
+        a.to_csv()
     # bit_twiddle_params(a, data, util.features)
 
     # param_dist = {'penalty':['l1', 'l2'], 'C':[10**i for i in range(-5, 5)]}

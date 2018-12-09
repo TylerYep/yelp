@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import sklearn
 import pickle
-from sklearn.metrics import precision_recall_fscore_support, r2_score
+from sklearn.metrics import precision_recall_fscore_support, r2_score, mean_squared_error
 from sklearn.model_selection import RandomizedSearchCV
 
 import os, sys
@@ -42,11 +42,13 @@ class Algorithm:
     def train(self, x, y):
         self.clf.fit(x, y)
         preds = self.predict(x)
-        return util.get_acc(y, preds)
+        return mean_squared_error(y, preds)
+        # return util.get_acc(y, preds)
 
     def eval(self, x, y):
         predictions = self.predict(x)
-        test_error = util.get_acc(y, predictions)
+        # test_error = util.get_acc(y, predictions)
+        test_error = mean_squared_error(y, predictions)
         # prfs = precision_recall_fscore_support(y, predictions)
         # prfs = r2_score(y, predictions)
         return test_error#, prfs
