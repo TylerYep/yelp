@@ -420,7 +420,7 @@ def assess_knn_louvain(name, point_info, categories, labels, actions=['save', 'l
             cat_graph = knn.split(graph, c, category_map)
             cat_graph = cutoff.filter_connected_components(cat_graph)
             cat_graph = comm.filter_communities(cat_graph, comm.louvain(cat_graph), 
-                    filter_on='edge_length')
+                    filter_on='edge_density')
             if 'evaluate' in actions:
                 res = evaluate('kl,k={}'.format(k), c, set(cat_graph.nodes()), labels)
                 results[c][k] = res

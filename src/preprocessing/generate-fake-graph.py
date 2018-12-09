@@ -4,6 +4,7 @@ import random
 import collections
 import matplotlib.pyplot as plt
 import os
+import sys
 
 parser = argparse.ArgumentParser(description = 'generate fake graph using $BASE-category.png and $BASE-density.png')
 parser.add_argument('--dir', '-d', help='directory of density and category files', default='data/fake-graphs/1')
@@ -23,8 +24,8 @@ for c in cat_map_hex:
 for c in density_map_hex:
     density_map[hex_to_rgb(c)] = density_map_hex[c]
 
-print cat_map
-print density_map
+print >> sys.stderr, cat_map
+print >> sys.stderr, density_map
 
 category_file = os.path.join(args.dir, 'category.png')
 density_file = os.path.join(args.dir, 'density.png')
