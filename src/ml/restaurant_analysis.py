@@ -41,7 +41,7 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     df['comm_sz'] = df['id'].map(lambda x: 0 if x not in assignments else len(partition[assignments[x]]))
 
     ##### avg community rating #####
-    #precalculate avg community ratings
+    # precalculate avg community ratings
     comm_review_counts = {}
     for idx, comm in partition.iteritems():
         metric_sum = 0.0
