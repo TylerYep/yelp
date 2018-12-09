@@ -48,8 +48,8 @@ class Algorithm:
         predictions = self.predict(x)
         test_error = util.get_acc(y, predictions)
         # prfs = precision_recall_fscore_support(y, predictions)
-        prfs = r2_score(y, predictions)
-        return test_error, prfs
+        # prfs = r2_score(y, predictions)
+        return test_error#, prfs
 
 
     def run(self, data, features, clf_options={}):
@@ -67,7 +67,7 @@ class Algorithm:
         val_y = data.labels[data.val_indices]
 
         train_acc = self.train(train_x, train_y)
-        test_acc, prfs = self.eval(val_x, val_y)
+        test_acc = self.eval(val_x, val_y)
 
         # Add a row to results
         row = (self.name, str(clf_options), train_acc, test_acc)

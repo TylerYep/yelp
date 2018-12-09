@@ -78,3 +78,6 @@ def load_graph():
 
     # pd.to_numeric(dfeatures['review_count'], errors='coerce')
     return dfeatures
+    # Tyler's
+    # trainfeatures = extract_features("data/graph_toronto_knn_20.csv", "data/yelp_toronto.csv", "data/louvain_dict_knn_20.json")
+    # testfeatures = extract_features("data/graph_calgary_knn_20.csv", "data/yelp_calgary.csv", "data/louvain_calgary_dict_knn_20.json")

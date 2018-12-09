@@ -29,7 +29,8 @@ models = [KNeighborsClassifier, SVC, GaussianProcessClassifier, DecisionTreeClas
 model_dict = dict(zip(names, models))
 
 def get_acc(true, pred):
-    return(np.mean(true == pred))
+    return(np.mean(abs(true - pred) < 10))
+    # return(np.mean(true == pred))
 
 def save_pkl(fname, obj):
     with open(fname, 'wb+') as f:
