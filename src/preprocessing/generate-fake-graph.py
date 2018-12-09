@@ -89,11 +89,11 @@ for k in points:
 
 colors = ['b', 'g', 'r', 'm', 'k']
 
-for i, point_type in enumerate(categorized_points):
-    type_points = categorized_points[point_type]
-    xpoints, ypoints = zip(*type_points)
-    plt.scatter(xpoints, ypoints, c = colors[i], marker = '.')
-plt.show() 
+# for i, point_type in enumerate(categorized_points):
+#     type_points = categorized_points[point_type]
+#     xpoints, ypoints = zip(*type_points)
+#     plt.scatter(xpoints, ypoints, c = colors[i], marker = '.')
+# plt.show() 
 
 dirname = os.path.join(args.dir)
 pointfile = os.path.join(dirname, 'points.csv')
