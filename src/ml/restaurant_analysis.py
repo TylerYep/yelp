@@ -10,6 +10,8 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     df = pd.read_csv(rest_file, sep=' ')
     G = nx.from_pandas_edgelist(edges, source = 'r1', target='r2')
 
+    
+
     #community dicts
     # if louvain_dict:
     with open(louvain_dict, "r") as f:
@@ -22,6 +24,7 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
         else:
             partition[idx].append(part)
 
+    df = df[df['id'].map(lambda x: x in assignments)]
     #add features to df!
     ##### degree #####
     df['degree'] = df['id'].map(lambda x: 0 if x not in assignments else G.degree(x))
@@ -86,6 +89,7 @@ def load_graph():
     testfeatures['split'] = 1
     dfeatures = pd.concat([trainfeatures, testfeatures])
 
+    dfeatures = dfeatures.reset_index(drop=True)
     # pd.to_numeric(dfeatures['review_count'], errors='coerce')
     return dfeatures
     # Tyler's
