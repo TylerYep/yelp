@@ -52,13 +52,13 @@ nx.relabel_nodes(G, rid_map, copy=False)
 
 if radius_sz:
     outputStr = "radius_{}".format(radius_sz)
-    edgeOutput = "edgelist_" + outputStr
+    # edgeOutput = "edgelist_" + outputStr
 else:
     outputStr = "knn_{}".format(num_neighbors)
-    edgeOutput = "edgelist_" + outputStr
+    # edgeOutput = "edgelist_" + outputStr
 
 with open(output_file.format(outputStr), 'wb+') as fout:
-    with open(output_file.format(edgeOutput), 'wb+') as fout2:
+    # with open(output_file.format(edgeOutput), 'wb+') as fout2:
         fout.write('r1 r2 weight\n')
         nx.write_edgelist(G, fout, data="weight")
-        nx.write_edgelist(G, fout2, data="weight")
+        # nx.write_edgelist(G, fout2, data="weight")

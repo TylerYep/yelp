@@ -4,20 +4,15 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-def load_graph():
-
-    edgefile = "data/toronto_knn_20.csv"
-    restfile = "data/yelp_toronto.csv"
-    communityfile = "data/louvain_dict_knn_20.json"
-
+def extract_features(edge_file, rest_file, louvain_dict=None):
     # read in files, construct graph
-    edges = pd.read_csv(edgefile, ',', header = 0)
-    df = pd.read_csv(restfile, sep=' ')
+    edges = pd.read_csv(edge_file, ' ', header = 0)
+    df = pd.read_csv(rest_file, sep=' ')
     G = nx.from_pandas_edgelist(edges, source = 'r1', target='r2')
 
-
     #community dicts
-    with open(communityfile, "r") as f:
+    # if louvain_dict:
+    with open(louvain_dict, "r") as f:
         assignments = json.loads(f.read())
     partition = {}
     #translate dict from community # --> list of nodes in community
@@ -29,7 +24,7 @@ def load_graph():
 
     #add features to df!
     ##### degree #####
-    df['degree'] = df['id'].map(lambda x: 0 if x not in assignments else float(G.degree(x)))
+    df['degree'] = df['id'].map(lambda x: 0 if x not in assignments else G.degree(x))
 
     ##### clustering coefficient #####
     df['clustering'] = df['id'].map(lambda x: 0 if x not in assignments else nx.clustering(G, x))
@@ -58,9 +53,21 @@ def load_graph():
 
     df['comm_review_count'] = df['id'].map(lambda x: 0 if x not in assignments else comm_review_counts[assignments[x]])
     #predicting: review count, rating separately, review count * normalized rating?
+    #now: weighting
+    # df['review_count'] = df['review_count'] * df['stars'] / 5
+    # df['review_count']
+
     cols = {'degree': df.degree, 'clustering': df.clustering, 'comm_edge_density': df.comm_edge_density,
     'comm_sz': df.comm_sz, 'comm_review_count': df.comm_review_count, 'review_count': df.review_count}
     dfeatures = pd.DataFrame(cols)
-    dfeatures['split'] = np.random.choice(3, len(dfeatures), p=[0.8, 0.1, 0.1])
-    pd.to_numeric(dfeatures['review_count'], errors='coerce')
+    return dfeatures
+
+def load_graph():
+    trainfeatures = extract_features("data/graph_toronto_knn_20.csv", "data/yelp_toronto.csv", "data/louvain_dict_knn_20.json")
+    testfeatures = extract_features("data/graph_calgary_knn_20.csv", "data/yelp_calgary.csv", "data/louvain_calgary_dict_knn_20.json")
+    trainfeatures['split'] = 0
+    testfeatures['split'] = 1
+    dfeatures = pd.concat([trainfeatures, testfeatures])
+
+    # pd.to_numeric(dfeatures['review_count'], errors='coerce')
     return dfeatures
