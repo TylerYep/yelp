@@ -10,8 +10,6 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     df = pd.read_csv(rest_file, sep=' ')
     G = nx.from_pandas_edgelist(edges, source = 'r1', target='r2')
 
-    
-
     #community dicts
     # if louvain_dict:
     with open(louvain_dict, "r") as f:
@@ -24,7 +22,7 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
         else:
             partition[idx].append(part)
 
-    df = df[df['id'].map(lambda x: x in assignments)]
+    df = df[df['id'].map(lambda x: x in assignments)] #drop all vals not in communities
     #add features to df!
     ##### degree #####
     df['degree'] = df['id'].map(lambda x: 0 if x not in assignments else G.degree(x))
@@ -73,17 +71,19 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     return dfeatures
 
 def load_graph():
-    city = "toronto"
-    ef = "data/knnsplit/graph_" + city + "_cats_uncut_8.csv"
-    rf = "data/yelp_" + city + ".csv"
-    cf = "data/knnsplit/community_" + city + "_cats_uncut_8.json"
-    trainfeatures = extract_features(ef, rf, cf)
+    def get_concat_df(city, categories):
+        features = []
+        for idx, cat in enumerate(categories):
+            ef = "data/knnsplit/graph_" + city + "{}_8.csv".format(idx)
+            rf = "data/yelp_" + city + ".csv"
+            cf = "data/knnsplit/community_" + city + "{}_8.json".format(idx)
+            features.append(extract_features(ef, rf, cf))
+        catfeatures = pd.concat(features)
+        return catfeatures
 
-    city = "calgary"
-    ef = "data/knnsplit/graph_" + city + "_cats_uncut_8.csv"
-    rf = "data/yelp_" + city + ".csv"
-    cf = "data/knnsplit/community_" + city + "_cats_uncut_8.json"
-    testfeatures = extract_features(ef, rf, cf)
+    categories = ["Coffee & Tea", "Bars", "Sandwiches", "Breakfast & Brunch", "Chinese", "Middle Eastern", "Japanese", "Pizza", "Mexican", "Mediterranean", "Korean", "Thai"]
+    trainfeatures = get_concat_df('toronto', categories)
+    testfeatures = get_concat_df('calgary', categories)
 
     trainfeatures['split'] = 0
     testfeatures['split'] = 1

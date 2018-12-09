@@ -35,6 +35,7 @@ def bit_twiddle_params(a, data, features):
         a.to_csv()
 
 if __name__ == "__main__":
+    # names = ['Decision_Tree']
     for name in names:
         name += "-concat"
         a = algs.load_alg(name)
