@@ -70,8 +70,18 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     return dfeatures
 
 def load_graph():
-    trainfeatures = extract_features("data/knnsplit/graph_toronto_8.csv", "data/yelp_toronto.csv", "data/knnsplit/community_toronto_8.json")
-    testfeatures = extract_features("data/knnsplit/graph_calgary_8.csv", "data/yelp_calgary.csv", "data/knnsplit/community_calgary_8.json")
+    city = "toronto"
+    ef = "data/knnsplit/graph_" + city + "_cats_uncut_8.csv"
+    rf = "data/yelp_" + city + ".csv"
+    cf = "data/knnsplit/community_" + city + "_cats_uncut_8.json"
+    trainfeatures = extract_features(ef, rf, cf)
+
+    city = "calgary"
+    ef = "data/knnsplit/graph_" + city + "_cats_uncut_8.csv"
+    rf = "data/yelp_" + city + ".csv"
+    cf = "data/knnsplit/community_" + city + "_cats_uncut_8.json"
+    testfeatures = extract_features(ef, rf, cf)
+
     trainfeatures['split'] = 0
     testfeatures['split'] = 1
     dfeatures = pd.concat([trainfeatures, testfeatures])

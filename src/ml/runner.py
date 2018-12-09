@@ -35,7 +35,7 @@ def bit_twiddle_params(a, data, features):
         a.to_csv()
 
 if __name__ == "__main__":
-    a = algs.load_alg('SVM')
+    a = algs.load_alg('Decision_Tree')
     data = util.load_pkl(feature_path)
     a.run(data, util.features)
     a.to_csv()
