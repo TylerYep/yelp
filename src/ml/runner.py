@@ -30,8 +30,9 @@ def bit_twiddle_params(a, data, features):
     #         a.to_csv()
 
 if __name__ == "__main__":
-    a = algs.load_alg('Logistic_Regression')
+    a = algs.load_alg('SVM')
     data = util.load_pkl(feature_path)
     bit_twiddle_params(a, data, util.features)
+    
     # param_dist = {'penalty':['l1', 'l2'], 'C':[10**i for i in range(-5, 5)]}
-    # a.search(data, param_dist, ['word count', 'nl'])
+    # a.search(data, param_dist, ['graph_features'])
