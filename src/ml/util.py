@@ -16,7 +16,7 @@ from sklearn.dummy import DummyClassifier
 
 features = ['graph_features']
 
-results_headers = ['model_type', 'clf_options', 'train_acc', 'test_acc']
+results_headers = ['model_type', 'clf_options', 'train_acc', 'dev_acc', 'test_acc']
 
 names = ["k_Nearest_Neighbors", "SVM", "Gaussian_Process",
          "Decision_Tree", "Random_Forest", "Neural_Net", "AdaBoost",
@@ -29,7 +29,8 @@ models = [KNeighborsClassifier, SVC, GaussianProcessClassifier, DecisionTreeClas
 model_dict = dict(zip(names, models))
 
 def get_acc(true, pred):
-    return(np.mean(true == pred))
+    return(np.mean(abs(true - pred) < 10))
+    # return(np.mean(true == pred))
 
 def save_pkl(fname, obj):
     with open(fname, 'wb+') as f:

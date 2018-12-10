@@ -1,13 +1,13 @@
 import networkx as nx
-import community 
+import community
 import pandas as pd
 import json
 import argparse
 
 #python src\graph-construction\louvain.py -e data/normalized/points_delaunay_Chinese_edge_full.csv -d data/normalized/louvain_dict_edge.json -o data/normalized/louvain_edge.csv
 parser = argparse.ArgumentParser(description='Detect communities with Louvain')
-parser.add_argument('--edgefile', '-f', help='csv of edges', default='data/graph_toronto_knn_20.csv')
-parser.add_argument('--dictfile', '-o', help='outfile', default="data/louvain_toronto_dict_knn_20.json")
+parser.add_argument('--edgefile', '-f', help='csv of edges', default='data/graph_calgary_knn_20.csv')
+parser.add_argument('--dictfile', '-o', help='outfile', default="data/louvain_calgary_dict_knn_20.json")
 args = parser.parse_args()
 
 edge = pd.read_csv(args.edgefile, ' ', header = 0)

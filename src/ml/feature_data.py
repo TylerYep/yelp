@@ -11,16 +11,21 @@ sys.path.append('algorithms')
 import util
 
 class DataFeatures:
-    def __init__(self):
-        self.raw = load_graph()
-        self.feature_matrix = self.raw
-        self.fname = 'data/ml/graph_features.pkl'
+    def __init__(self, folder):
+        self.raw = load_graph(folder)
+        self.labels = self.raw.review_count.values
+
+        df = self.raw
+        feature_cols = {'degree': df.degree, 'clustering': df.clustering, 'comm_edge_density': df.comm_edge_density,
+                        'comm_sz': df.comm_sz, 'comm_review_count': df.comm_review_count, 'split': df.split}
+        self.feature_matrix = pd.DataFrame(feature_cols)
+        self.raw = self.feature_matrix
+        self.fname = 'data/ml/graph_features_{}.pkl'.format(folder)
 
         self.train_indices = self.raw[self.raw.split == 0].index
         self.val_indices = self.raw[self.raw.split == 1].index
         self.test_indices = self.raw[self.raw.split == 2].index
 
-        self.labels = self.raw.review_count.values
         self.save()
 
     def get_f_dict(self):

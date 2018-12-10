@@ -22,6 +22,7 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
         else:
             partition[idx].append(part)
 
+    df = df[df['id'].map(lambda x: x in assignments)] #drop all vals not in communities
     #add features to df!
     ##### degree #####
     df['degree'] = df['id'].map(lambda x: 0 if x not in assignments else G.degree(x))
@@ -41,7 +42,7 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     df['comm_sz'] = df['id'].map(lambda x: 0 if x not in assignments else len(partition[assignments[x]]))
 
     ##### avg community rating #####
-    #precalculate avg community ratings
+    # precalculate avg community ratings
     comm_review_counts = {}
     for idx, comm in partition.iteritems():
         metric_sum = 0.0
@@ -51,8 +52,15 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
         metric_sum /= len(comm)
         comm_review_counts[idx] = metric_sum
 
-    df['comm_review_count'] = df['id'].map(lambda x: 0 if x not in assignments else comm_review_counts[assignments[x]])
-    #predicting: review count, rating separately, review count * normalized rating?
+    def comm_review_count_exclude(x):
+        if x not in assignments:
+            return 0
+        else:
+            curr_review = df.loc[df['id'] == x]['review_count']
+            comm_review_count = comm_review_counts[assignments[x]]
+            return float((comm_review_count * len(partition[assignments[x]]) - curr_review) / (len(partition[assignments[x]]) - 1))
+
+    df['comm_review_count'] = df['id'].map(lambda x: comm_review_count_exclude(x))#predicting: review count, rating separately, review count * normalized rating?#predicting: review count, rating separately, review count * normalized rating?
     #now: weighting
     # df['review_count'] = df['review_count'] * df['stars'] / 5
     # df['review_count']
@@ -62,12 +70,30 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     dfeatures = pd.DataFrame(cols)
     return dfeatures
 
-def load_graph():
-    trainfeatures = extract_features("data/graph_toronto_knn_20.csv", "data/yelp_toronto.csv", "data/louvain_dict_knn_20.json")
-    testfeatures = extract_features("data/graph_calgary_knn_20.csv", "data/yelp_calgary.csv", "data/louvain_calgary_dict_knn_20.json")
-    trainfeatures['split'] = 0
-    testfeatures['split'] = 1
-    dfeatures = pd.concat([trainfeatures, testfeatures])
+def load_graph(folder):
+    def get_concat_df(city, categories):
+        features = []
+        # idx = "unsegmented"
+        for idx, cat in enumerate(categories):
+            ef = "data/{}/graph_" + city + "{}.csv".format(folder, idx)
+            rf = "data/yelp_" + city + ".csv"
+            cf = "data/{}/community_" + city + "{}.json".format(folder, idx)
+            features.append(extract_features(ef, rf, cf))
+        catfeatures = pd.concat(features)
+        # catfeatures = extract_features(ef, rf, cf)
+        return catfeatures
 
-    # pd.to_numeric(dfeatures['review_count'], errors='coerce')
+    categories = ["Coffee & Tea", "Bars", "Sandwiches", "Breakfast & Brunch", "Chinese", "Middle Eastern", "Japanese", "Pizza", "Mexican", "Mediterranean", "Korean", "Thai"]
+    trainfeatures = get_concat_df('toronto', categories)
+    devfeatures = get_concat_df('calgary', categories)
+    testfeatures = get_concat_df('montreal', categories)
+
+    trainfeatures['split'] = 0
+    devfeatures['split'] = 1
+    testfeatures['split'] = 2
+    dfeatures = pd.concat([trainfeatures, devfeatures, testfeatures])
+    dfeatures = dfeatures.reset_index(drop=True)
+
     return dfeatures
+    # trainfeatures = extract_features("data/graph_toronto_knn_20.csv", "data/yelp_toronto.csv", "data/louvain_dict_knn_20.json")
+    # testfeatures = extract_features("data/graph_calgary_knn_20.csv", "data/yelp_calgary.csv", "data/louvain_calgary_dict_knn_20.json")
