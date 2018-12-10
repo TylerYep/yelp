@@ -29,7 +29,7 @@ def bit_twiddle_params(a, data, features):
 
 if __name__ == "__main__":
     for name in names:
-        name += "-edge-rem-edge-norm"
+        name += "-final-edge-norm"
         a = algs.load_alg(name)
         data = util.load_pkl(feature_path)
         a.run(data, util.features)

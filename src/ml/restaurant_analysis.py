@@ -70,28 +70,30 @@ def extract_features(edge_file, rest_file, louvain_dict=None):
     dfeatures = pd.DataFrame(cols)
     return dfeatures
 
-def load_graph():
+def load_graph(folder):
     def get_concat_df(city, categories):
         features = []
+        # idx = "unsegmented"
         for idx, cat in enumerate(categories):
-            ef = "data/edge_rem_split_edge_norm/graph_" + city + "{}.csv".format(idx)
+            ef = "data/{}/graph_" + city + "{}.csv".format(folder, idx)
             rf = "data/yelp_" + city + ".csv"
-            cf = "data/edge_rem_split_edge_norm/community_" + city + "{}.json".format(idx)
+            cf = "data/{}/community_" + city + "{}.json".format(folder, idx)
             features.append(extract_features(ef, rf, cf))
         catfeatures = pd.concat(features)
+        # catfeatures = extract_features(ef, rf, cf)
         return catfeatures
 
     categories = ["Coffee & Tea", "Bars", "Sandwiches", "Breakfast & Brunch", "Chinese", "Middle Eastern", "Japanese", "Pizza", "Mexican", "Mediterranean", "Korean", "Thai"]
     trainfeatures = get_concat_df('toronto', categories)
-    testfeatures = get_concat_df('calgary', categories)
+    devfeatures = get_concat_df('calgary', categories)
+    testfeatures = get_concat_df('montreal', categories)
 
     trainfeatures['split'] = 0
-    testfeatures['split'] = 1
-    dfeatures = pd.concat([trainfeatures, testfeatures])
-
+    devfeatures['split'] = 1
+    testfeatures['split'] = 2
+    dfeatures = pd.concat([trainfeatures, devfeatures, testfeatures])
     dfeatures = dfeatures.reset_index(drop=True)
-    # pd.to_numeric(dfeatures['review_count'], errors='coerce')
+
     return dfeatures
-    # Tyler's
     # trainfeatures = extract_features("data/graph_toronto_knn_20.csv", "data/yelp_toronto.csv", "data/louvain_dict_knn_20.json")
     # testfeatures = extract_features("data/graph_calgary_knn_20.csv", "data/yelp_calgary.csv", "data/louvain_calgary_dict_knn_20.json")

@@ -4,7 +4,7 @@ import collections
 # investigation
 citystate = collections.defaultdict(int)
 state = collections.defaultdict(int)
-with open('data/yelp_academic_dataset_business.json', 'r') as f:
+with open('data/yelp_business.json', 'r') as f:
     for l in f:
         ex = json.loads(l)
         citystate[(ex[u'state'], ex[u'city'])] += 1

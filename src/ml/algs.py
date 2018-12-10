@@ -67,12 +67,14 @@ class Algorithm:
         train_y = data.labels[data.train_indices]
         val_x = X[data.val_indices]
         val_y = data.labels[data.val_indices]
+        test_x = X[data.test_indices]
+        test_y = data.labels[data.test_indices]
 
         train_acc = self.train(train_x, train_y)
-        test_acc = self.eval(val_x, val_y)
-
+        dev_acc = self.eval(val_x, val_y)
+        test_acc = self.eval(test_x, test_y)
         # Add a row to results
-        row = (self.name, str(clf_options), train_acc, test_acc)
+        row = (self.name, str(clf_options), train_acc, dev_acc, test_acc)
         self.results.loc[len(self.results)] = row
         self.save()
 
