@@ -12,9 +12,9 @@ cities = ["toronto", "calgary", "montreal"]
 for city in cities:
     categories = ["Coffee & Tea", "Bars", "Sandwiches", "Breakfast & Brunch", "Chinese",
                     "Middle Eastern", "Japanese", "Pizza", "Mexican", "Mediterranean", "Korean", "Thai"]
-    output_file = "data/edge_rem_split_edge_norm/graph_" + city + "{}.csv"
+    output_file = "data/edge_rem_split_angle_norm/graph_" + city + "{}.csv"
     node_file = "data/yelp_" + city + ".csv"
-    dict_file = "data/edge_rem_split_edge_norm/community_" + city + "{}.json"
+    dict_file = "data/edge_rem_split_angle_norm/community_" + city + "{}.json"
     k = 8
 
     (coords, nids, category_map, nodes) = evaluate.get_point_info(node_file)
@@ -22,8 +22,8 @@ for city in cities:
 
     for idx, category in enumerate(categories):
         graph = delaunay.delaunay(coords, nids, category_map, category)
-        # graph = graphnormalize.normalize_angle(graph, category, basegraph, nodes)
-        graph = graphnormalize.normalize_edge(graph, category, basegraph, nodes)
+        graph = graphnormalize.normalize_angle(graph, category, basegraph, nodes)
+        # graph = graphnormalize.normalize_edge(graph, category, basegraph, nodes)
 
         graph = cutoff.remove_edges_rounds(graph)
         # graph = cutoff.filter_connected_components(graph)

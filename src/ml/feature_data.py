@@ -11,8 +11,8 @@ sys.path.append('algorithms')
 import util
 
 class DataFeatures:
-    def __init__(self, folder):
-        self.raw = load_graph(folder)
+    def __init__(self, folder, use_test = False):
+        self.raw = load_graph(folder, use_test)
         self.labels = self.raw.review_count.values
 
         df = self.raw
@@ -25,7 +25,6 @@ class DataFeatures:
         self.train_indices = self.raw[self.raw.split == 0].index
         self.val_indices = self.raw[self.raw.split == 1].index
         self.test_indices = self.raw[self.raw.split == 2].index
-
         self.save()
 
     def get_f_dict(self):
@@ -42,5 +41,5 @@ class DataFeatures:
 
 
 if __name__ == "__main__":
-    x = DataFeatures()
+    x = DataFeatures('edge_rem_split', False)
 

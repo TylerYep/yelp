@@ -42,16 +42,14 @@ class Algorithm:
     def train(self, x, y):
         self.clf.fit(x, y)
         preds = self.predict(x)
-        # return mean_squared_error(y, preds)
-        return util.get_acc(y, preds)
+        return mean_squared_error(y, preds)
+        # return util.get_acc(y, preds)
 
     def eval(self, x, y):
         predictions = self.predict(x)
-        test_error = util.get_acc(y, predictions)
-        # test_error = mean_squared_error(y, predictions)
-        # prfs = precision_recall_fscore_support(y, predictions)
-        # prfs = r2_score(y, predictions)
-        return test_error#, prfs
+        # test_error = util.get_acc(y, predictions)
+        test_error = mean_squared_error(y, predictions)
+        return test_error
 
 
     def run(self, data, features, clf_options={}):
@@ -73,6 +71,7 @@ class Algorithm:
         train_acc = self.train(train_x, train_y)
         dev_acc = self.eval(val_x, val_y)
         test_acc = self.eval(test_x, test_y)
+        
         # Add a row to results
         row = (self.name, str(clf_options), train_acc, dev_acc, test_acc)
         self.results.loc[len(self.results)] = row
