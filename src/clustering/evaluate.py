@@ -127,7 +127,7 @@ def assess_knn(name, point_info, categories, labels, actions=['save','load','eva
         pos[nid] = (coord[0], coord[1])
 
 
-    ks = list(range(4,15))
+    ks = list(range(4,20))
     results = {cat : {} for cat in categories}
     if 'load' in actions:
         for k in ks:
@@ -182,7 +182,7 @@ def assess_edgerem(name, point_info, categories, labels,
         pos[nid] = (coord[0], coord[1])
 
     rounds_interval = 1
-    num_its = 5
+    num_its = 6
     results = {c : {} for c in categories}
     if 'load' in actions:
         for c in categories:
@@ -250,26 +250,26 @@ def assess_ns(name, point_info, categories, labels,
     for nid, coord in zip(nids, coords):
         pos[nid] = (coord[0], coord[1])
 
-    num_its = 3
+    cutps = list(range(60,61,1))
     results = {c : {} for c in categories}
     if 'load' in actions:
         for c in categories:
-            for num_rounds in range(1, num_its+1):
+            for cutp in cutps:
                 graphfile = 'src/clustering/graphs/{}-{}-ns-{}-{:02}.csv'.format(
-                        name, c, normalize, num_rounds)
+                        name, c, normalize, cutp)
                 if os.path.isfile(graphfile):
                     edges = pd.read_csv(graphfile, ',', header=0)
                     edges['r1'] = edges['r1'].apply(str)
                     edges['r2'] = edges['r2'].apply(str)
                     cut_graph = nx.from_pandas_edgelist(edges, source='r1', target='r2')
                     if 'evaluate' in actions:
-                        res = evaluate('ns,{},r={}'.format(normalize, num_rounds), c, 
+                        res = evaluate('ns,{},c={}'.format(normalize, cutp), c, 
                                 set(cut_graph.nodes()), labels)
-                        results[c][num_rounds] = res
+                        results[c][cutp] = res
 
     basegraph = delaunay(coords, nids, category_map, None)
     for c in categories:
-        if all([num_rounds in results[c] for num_rounds in range(1, num_its+1)]):
+        if all([cutp in results[c] for cutp in cutps]):
             continue
         graph = delaunay(coords, nids, category_map, c)
         if normalize == 'edge':
@@ -277,26 +277,25 @@ def assess_ns(name, point_info, categories, labels,
         else:
             graph = graphnormalize.normalize_angle(graph, c, basegraph, nodes)
         graph = randomwalk.invert_graph_probs(graph)
-
-        for i in range(num_its):
-            num_rounds = i+1
-            graph = randomwalk.ns(graph)
-            cut_graph = cutoff.remove_edges(graph, 0.21, False)
+        graph = randomwalk.ns(randomwalk.ns(graph))
+        for cutp in cutps:
+            cut = float(cutp) / 100
+            cut_graph = cutoff.remove_edges(graph, cut, False)
             cut_graph = cutoff.filter_connected_components(cut_graph)
 
             if 'evaluate' in actions:
-                res = evaluate('ns,{},r={}'.format(normalize, num_rounds), c, 
+                res = evaluate('ns,{},c={}'.format(normalize, cutp), c, 
                         set(cut_graph.nodes()), labels)
-                results[c][num_rounds] = res
+                results[c][cutp] = res
             if 'graph' in actions:
                 draw_graph(cut_graph, pos, 
-                        'randomwalk-ns: normalize={} rounds={}'.format(normalize, num_rounds), 
+                        'randomwalk-ns: normalize={} cut={}'.format(normalize, cutp), 
                         'src/clustering/figures/{}-{}-ns-{}-{:02}.png'.format(
-                            name, c, normalize, num_rounds))
+                            name, c, normalize, cutp))
             if 'save' in actions:
                 save_graph(cut_graph,
                         'src/clustering/graphs/{}-{}-ns-{}-{:02}.csv'.format(
-                            name, c, normalize, num_rounds))
+                            name, c, normalize, cutp))
     return results
 
 def evaluate_ns(name, point_info, categories, labels):
@@ -321,7 +320,7 @@ def assess_ce(name, point_info, categories, labels,
     for nid, coord in zip(nids, coords):
         pos[nid] = (coord[0], coord[1])
 
-    cutps = list(range(0,30,1))
+    cutps = list(range(21,22,1))
     results = {c : {} for c in categories}
     if 'load' in actions:
         for c in categories:
@@ -397,7 +396,7 @@ def assess_knn_louvain(name, point_info, categories, labels, actions=['save', 'l
     for nid, coord in zip(nids, coords):
         pos[nid] = (coord[0], coord[1])
 
-    ks = list(range(5,20,1))
+    ks = list(range(15,16,1))
     results = {cat : {} for cat in categories}
     if 'load' in actions:
         for k in ks:
@@ -529,6 +528,9 @@ def graph_all(name, point_info, categories, labels):
     assess_ns(*args, actions=['save','load','graph'], normalize='angle')
     assess_ce(*args, actions=['save','load','graph'], normalize='edge')
     assess_ce(*args, actions=['save','load','graph'], normalize='angle')
+    assess_knn_louvain(*args, actions=['save', 'load', 'graph'])
+    assess_norm_louvain(*args, actions=['save', 'load', 'graph'], normalize='edge')
+    assess_norm_louvain(*args, actions=['save', 'load', 'graph'], normalize='angle')
 
 def fake_graph(fakegraph_dir):
     name = os.path.basename(fakegraph_dir)
@@ -542,10 +544,10 @@ def actual_data(real_dir):
     name = os.path.basename(real_dir)
     points_file = os.path.join(real_dir, 'points.csv')
     point_info = get_point_info(points_file)
-    categories = ['Chinese', 'Indian']
+    categories = ['Chinese']
     labels = None
     graph_all(name, point_info, categories, labels)
 
 if __name__=='__main__':
     args = parser.parse_args()
-    fake_graph(args.dir)
+    actual_data(args.dir)

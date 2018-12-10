@@ -33,7 +33,7 @@ for edge_file in args.edge_files:
 
 plt.figure(figsize = (20, 18))
 
-mx, my = (rest['longitude'].values, rest['latitude'].values)
+mx, my = (rest['latitude'].values, rest['longitude'].values)
 pos = {}
 for i, el in enumerate(rest['id']):
     pos[el] = (mx[i], my[i])
@@ -53,5 +53,5 @@ for color, graph, efile in zip(colors, graphs, args.edge_files):
     nx.draw_networkx_nodes(G = graph, pos = pos, node_list = graph.nodes(), \
             node_color = 'r', node_size = 0)
     nx.draw_networkx_edges(G = graph, pos = pos, edge_color = color, label=os.path.basename(efile), width=thick)
-plt.legend()
+# plt.legend()
 plt.show()
