@@ -1,7 +1,7 @@
 import json
 import collections
 
-city_name = u'Calgary'
+city_name = u'Montreal'
 # investigation
 with open('data/yelp_business.json', 'r') as f:
     with open('data/yelp_' + city_name.lower() + '.json', 'w') as out:

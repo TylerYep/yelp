@@ -16,7 +16,7 @@ from sklearn.dummy import DummyClassifier
 
 features = ['graph_features']
 
-results_headers = ['model_type', 'clf_options', 'train_acc', 'test_acc']
+results_headers = ['model_type', 'clf_options', 'train_acc', 'dev_acc', 'test_acc']
 
 names = ["k_Nearest_Neighbors", "SVM", "Gaussian_Process",
          "Decision_Tree", "Random_Forest", "Neural_Net", "AdaBoost",

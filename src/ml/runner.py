@@ -16,8 +16,6 @@ names = ["k_Nearest_Neighbors", "SVM", # "Gaussian_Process",
          "Decision_Tree", "Random_Forest", "Neural_Net", "AdaBoost",
          "Naive_Bayes", "Logistic_Regression", 'Dummy', 'LinearReg']
 
-
-
 feature_path = 'data/ml/graph_features.pkl'
 
 
@@ -37,7 +35,8 @@ def bit_twiddle_params(a, data, features):
 if __name__ == "__main__":
     # names = ['Decision_Tree']
     for name in names:
-        name += "-concat"
+        name += "-final"
+        print name
         a = algs.load_alg(name)
         data = util.load_pkl(feature_path)
         a.run(data, util.features)
