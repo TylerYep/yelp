@@ -74,9 +74,9 @@ def load_graph():
     def get_concat_df(city, categories):
         features = []
         for idx, cat in enumerate(categories):
-            ef = "data/knnsplit/graph_" + city + "{}_8.csv".format(idx)
+            ef = "data/edge_rem_split_edge_norm/graph_" + city + "{}.csv".format(idx)
             rf = "data/yelp_" + city + ".csv"
-            cf = "data/knnsplit/community_" + city + "{}_8.json".format(idx)
+            cf = "data/edge_rem_split_edge_norm/community_" + city + "{}.json".format(idx)
             features.append(extract_features(ef, rf, cf))
         catfeatures = pd.concat(features)
         return catfeatures

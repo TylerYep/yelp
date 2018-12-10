@@ -13,7 +13,7 @@ def filter_connected_components(graph, verbose = False):
     nlens = np.array(lens)
     ave = np.mean(nlens)
     std = np.std(nlens)
-    if verbose: 
+    if verbose:
         print "threshold: {}".format(ave + std)
     to_ret = graph.copy()
     for l, cc in zip(lens, ccs):
@@ -22,9 +22,9 @@ def filter_connected_components(graph, verbose = False):
                 to_ret.remove_node(n)
     return to_ret
 
-def remove_edges_rounds(graph, rounds, upper, verbose=False):
+def remove_edges_rounds(graph, rounds=2, upper=True, verbose=False):
     '''
-    repeatedly remove edges based on upper. if upper is true, then 
+    repeatedly remove edges based on upper. if upper is true, then
     remove edges > ave, else < ave
     '''
     vals = np.array([graph[u][v]['weight'] for u,v in graph.edges()])

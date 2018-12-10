@@ -6,12 +6,6 @@ import evaluate
 import cutoff
 import json
 
-sys.path.append('src/')
-# from knn import knn, split
-# from evaluate import get_point_info
-# from cutoff import filter_connected_components
-
-
 city = "calgary"
 categories = ["Coffee & Tea", "Bars", "Sandwiches", "Breakfast & Brunch", "Chinese", "Middle Eastern", "Japanese", "Pizza", "Mexican", "Mediterranean", "Korean", "Thai"]
 output_file = "data/knnsplit/graph_" + city + "{}_8.csv"
@@ -35,6 +29,5 @@ for idx, category in enumerate(categories):
 	    for node in component:
 	        mapping[node] = i
 
-	
 	with open(dict_file.format(idx), "w+") as f:
 	    json.dump(mapping, f)

@@ -40,8 +40,8 @@ print(plot_x)
 print(plot_y)
 
 # Plot Decision Region using mlxtend's awesome plotting function
-plot_decision_regions(X=plot_x, y=plot_y, clf=clf, legend=2, feature_index=feature_ind, filler_feature_values=filler_vals,
-                            filler_feature_ranges=filler_ranges)
+plot_decision_regions(X=plot_x, y=plot_y, clf=clf, legend=2, feature_index=feature_ind,
+                            filler_feature_values=filler_vals, filler_feature_ranges=filler_ranges)
 
 # Update plot object with X/Y axis labels and Figure Title
 # plt.xlabel(X.columns[0], size=14)
