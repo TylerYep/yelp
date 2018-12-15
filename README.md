@@ -1,8 +1,46 @@
-# yelp
-Community Detection on the Yelp Dataset
+# Yelp
+## Predicting Restaurant Success using Attribute-Specific Spatial Clusters
+### Community Detection on the Yelp Dataset
+By Heidi Chen (heidichen7), Edward Lee (ed-w-lee), Tyler Yep (tyleryep)  
+
+# Preprocess/Clean Dataset
+```
+python src/preprocesssing/data-clean.py
+```
+Extracts the relevant fields from the Yelp data files.
+
+# Graph Construction / Spatial Clustering
+```
+python src/graph-construction/knn.py or /louvain.py
+```
+Creates networkx or snap graphs.
+
+# Graph Visualization
+```
+python src/visualization/graph-viz.py
+```
+
+Given a Yelp CSV of latitude/longitude coordinates, maps data into a nice-looking map.
+Note that any outlier points will ruin the graph - make sure all data passed in is within a couple lat/long degrees of each other.
+
+# Community Detection
+```
+python src/clustering/comm.py
+```
+Detects a lot of variations of communities to varying degrees of success.
+
+# Supervised Learning
+```
+python src/ml/runner.py
+```
+Runs every single sci-kit learn model to look for best prediction.
+
+# Administrivia
 
 To generate distance matrix:
+```
 python create_distance_matrix.py
+```
 
 To generate fake graphs:
 ---

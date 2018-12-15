@@ -11,7 +11,7 @@ sys.path.append('algorithms')
 import util
 
 class DataFeatures:
-    def __init__(self, folder, use_test = False):
+    def __init__(self, folder='', use_test = False):
         self.raw = load_graph(folder, use_test)
         self.labels = self.raw.review_count.values
 

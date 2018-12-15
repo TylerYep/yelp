@@ -4,7 +4,7 @@ import json
 import requests
 import csv
 np.set_printoptions(edgeitems=30, linewidth=100000)
-API_KEY = 'AIzaSyBTHAUwdhwblKNeddbm4hkcCm_AI1pLNb0'
+API_KEY = '' # Get it yourself
 ELEMENT_LIMIT = 10
 API_CALL_LIMIT = 20
 

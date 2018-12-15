@@ -10,8 +10,8 @@ import math
 colors = ['b', 'g', 'm', 'k', 'r', 'c', 'y', 'coral', 'darkviolet']
 
 parser = argparse.ArgumentParser(description='visualize a graph')
-parser.add_argument('--rest-file', '-r', help='csv of restaurants separated by spaces', default='data/yelp_toronto.csv')
-parser.add_argument('--edge-files', '-e', help='csv(s) of edges (limit of {} max)'.format(len(colors)), nargs='+', default=['data/toronto_knn_20.csv'])
+parser.add_argument('--rest-file', '-r', help='csv of restaurants separated by spaces', default='data/yelp_calgary.csv')
+parser.add_argument('--edge-files', '-e', help='csv(s) of edges (limit of {} max)'.format(len(colors)), nargs='+', default=['data/graph_calgary_knn_20.csv'])
 parser.add_argument('--color-assignments', '-c', help='json of edges --> community #s', default=None)
 parser.add_argument('--thickness', action='store_true', help='draw with thickness based on weight')
 parser.add_argument('--threshold', help='threshold for edge weights', default=None, type=float)
@@ -25,7 +25,7 @@ rest_file = args.rest_file
 rest = pd.read_csv(rest_file, ' ', header = 0)
 graphs = []
 for edge_file in args.edge_files:
-    edge = pd.read_csv(edge_file, ',', header = 0)
+    edge = pd.read_csv(edge_file, ' ', header = 0)
     if args.thickness or args.threshold:
         graph = nx.from_pandas_edgelist(edge, source = 'r1', target='r2', edge_attr='weight')
     else:
@@ -35,10 +35,10 @@ for edge_file in args.edge_files:
 plt.figure(figsize = (10, 9))
 
 m = Basemap(projection='merc', \
-        llcrnrlat = rest['latitude'].min() - 0.05, \
-        urcrnrlat = rest['latitude'].max() + 0.05, \
-        llcrnrlon = float(rest['longitude'].min())- 0.1, \
-        urcrnrlon = rest['longitude'].max()+ 0.1, \
+        llcrnrlat = rest['latitude'].min() - 0.15, \
+        urcrnrlat = rest['latitude'].max() + 0.1, \
+        llcrnrlon = float(rest['longitude'].min())- 0.07, \
+        urcrnrlon = rest['longitude'].max()+ 0.07, \
         epsg = 3347)
 # For map types: http://server.arcgisonline.com/arcgis/rest/services
 # I like "World_Topo_Map" or "ESRI_Imagery_World_2D"
@@ -67,8 +67,8 @@ for color, graph in zip(colors, graphs):
         thick = [1.0 if graph[u][v]['weight'] > args.threshold else 0.0 for u,v in graph.edges()]
     else:
         thick = 1.0
-    # nx.draw_networkx_nodes(G = graph, pos = pos, node_list = graph.nodes(), \
-    #         node_color = color_map, node_size = 10)
+    nx.draw_networkx_nodes(G = graph, pos = pos, node_list = graph.nodes(), \
+            node_color = color_map, node_size = 3)
     nx.draw_networkx_edges(G = graph, pos = pos, edge_color = color, width = thick)
 plt.show()
 

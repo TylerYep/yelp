@@ -27,19 +27,32 @@ def bit_twiddle_params(a, data, features):
     a.to_csv()
 
 if __name__ == "__main__":
-    folder = 'edge_rem_split_angle_norm'
-    feature_path = 'data/ml/graph_features_{}.pkl'.format(folder)
+    feature_path = 'data/ml/graph_features.pkl'
     x = DataFeatures(folder, True)
     for name in names:
         opts = {}
         if name == "Decision_Tree":
             opts = {'min_samples_split': 20, 'max_features': 'log2', 'min_samples_leaf': 20}
-        name += "-ROUND2-angle-norm"
+        name += "-extra"
         a = algs.load_alg(name)
         data = util.load_pkl(feature_path)
 
         a.run(data, util.features, clf_options=opts)
         a.to_csv()
+
+    # folder = 'edge_rem_split_angle_norm'
+    # feature_path = 'data/ml/graph_features_{}.pkl'.format(folder)
+    # x = DataFeatures(folder, True)
+    # for name in names:
+    #     opts = {}
+    #     if name == "Decision_Tree":
+    #         opts = {'min_samples_split': 20, 'max_features': 'log2', 'min_samples_leaf': 20}
+    #     name += "-ROUND2-angle-norm"
+    #     a = algs.load_alg(name)
+    #     data = util.load_pkl(feature_path)
+    #
+    #     a.run(data, util.features, clf_options=opts)
+    #     a.to_csv()
         # param_dist = {'penalty':['l1', 'l2'], 'C':[10**i for i in range(-5, 5)]}
         # a.search(data, param_dist, ['graph_features'])
         # print(a.r.best_params)
